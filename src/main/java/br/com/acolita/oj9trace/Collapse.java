@@ -39,13 +39,13 @@ public class Collapse {
             final String thread = '*' == tokens[1].charAt(0) ? tokens[1].substring(1) : tokens[1];
             final Stack<Frame> stack = STACK_MAP.computeIfAbsent(thread, t -> new Stack<>());
             if("Entry".equals(tokens[3])) {
-                stack.push(new Frame(getMiliseconds(tokens[0]), BRACES.split(tokens[4])[0].substring(1)));
+                stack.push(new Frame(getMilliseconds(tokens[0]), BRACES.split(tokens[4])[0].substring(1)));
             }
             else if("Exit".equals(tokens[3])) {
                 final String currentStack = stack.stream().map(f -> f.frame).collect(Collectors.joining(";"));
                 final Long count = COUNT_MAP.getOrDefault(currentStack, 0L);
                 final Frame pop = stack.pop();
-                COUNT_MAP.put(currentStack, count + (getMiliseconds(tokens[0]) - pop.start));
+                COUNT_MAP.put(currentStack, count + (getMilliseconds(tokens[0]) - pop.start));
             }
         }
         for (final String key : COUNT_MAP.keySet()) {
@@ -53,7 +53,7 @@ public class Collapse {
         }
     }
 
-    private static long getMiliseconds(final String value) {
+    private static long getMilliseconds(final String value) {
         final String[] tokens = TIME.split(value);
         return Long.valueOf(tokens[0]) * 3600 * 1000 + Long.valueOf(tokens[1]) * 60 * 1000 + Long.valueOf(tokens[2]) * 1000 + Long.valueOf(tokens[3]) / 1000000;
     }
